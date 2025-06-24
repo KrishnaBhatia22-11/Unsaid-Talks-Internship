@@ -1,0 +1,161 @@
+# ASSIGNMENT - 1 
+# Password Vault and Strength Analyzer
+
+# Store username and password
+vault = {}
+
+# Special characters
+special_chars = "!@#$%^&*()-_+=<>?/|"
+
+# Lambda-style strength check
+def is_strong(password):
+    has_upper = any(c for c in password if 'A' <= c <= 'Z')
+    has_digit = any(c for c in password if '0' <= c <= '9')
+    has_special = any(c for c in password if c in special_chars)
+    long_enough = len(password) > 8
+    return has_upper and has_digit and has_special and long_enough
+
+# Classify strength
+def classify_password(password):
+    has_upper = any(c for c in password if 'A' <= c <= 'Z')
+    has_digit = any(c for c in password if '0' <= c <= '9')
+    has_special = any(c for c in password if c in special_chars)
+    length = len(password)
+    score = has_upper + has_digit + has_special
+
+    if length < 6:
+        return "Weak"
+    elif length >= 6 and score >= 2:
+        return "Medium"
+    elif length > 8 and score == 3:
+        return "Strong"
+    else:
+        return "Weak"
+
+# Add credentials
+def add_credentials():
+    username = input("Enter username: ")
+    if username in vault:
+        print("❌ Username already exists.\n")
+    else:
+        password = input("Enter password: ")
+        vault[username] = password
+        print(f"✅ Credentials for '{username}' added.\n")
+
+# View credentials
+def view_credentials():
+    if not vault:
+        print("⚠️  Vault is empty.\n")
+    else:
+        print("\n🔐 Stored Credentials:")
+        for user, pwd in vault.items():
+            print(f"👤 Username: {user} | 🔑 Password: {pwd}")
+        print()
+
+# Delete credentials
+def delete_credentials():
+    username = input("Enter username to delete: ")
+    if username in vault:
+        del vault[username]
+        print(f"✅ Credentials for '{username}' deleted.\n")
+    else:
+        print("❌ Username not found.\n")
+
+# Analyze all passwords
+def analyze_passwords():
+    if not vault:
+        print("⚠️  No credentials to analyze.\n")
+    else:
+        print("\n📊 Password Strength Analysis:")
+        for user, pwd in vault.items():
+            strength = classify_password(pwd)
+            print(f"👤 {user} | 🔑 {pwd} => Strength: {strength}")
+        print()
+
+# Main menu
+def main_vault():
+    while True:
+        print("========= 🔐 Password Vault Menu =========")
+        print("1. Add New Credentials")
+        print("2. View Credentials")
+        print("3. Delete Credentials")
+        print("4. Analyze Password Strength")
+        print("5. Exit")
+        choice = input("➡️  Enter your choice (1–5): ")
+
+        if choice == '1':
+            add_credentials()
+        elif choice == '2':
+            view_credentials()
+        elif choice == '3':
+            delete_credentials()
+        elif choice == '4':
+            analyze_passwords()
+        elif choice == '5':
+            print("👋 Exiting vault. Goodbye!")
+            break
+        else:
+            print("❌ Invalid choice. Please select from 1 to 5.\n")
+
+# Run Vault
+main_vault()
+
+####################################################################################################################
+
+# ASSIGNMENT - 2
+# Dice Game Tournament Simulator
+
+import random
+
+# Initialize players and scores
+players = ["Biswa", "Kuldeep", "Nirmaan", "Hiten", "Krishna", "Prateek"]
+scores = {player: 0 for player in players}
+previous_rolls = {player: 0 for player in players}
+
+rounds = 1
+total_rounds = 10
+
+print("🎲 Welcome to the Dice Game Tournament!\n")
+
+while rounds <= total_rounds:
+    print(f"\n🌀 Round {rounds} Begins:\n")
+    for player in players:
+        roll = random.randint(1, 6)
+        print(f"{player} rolls a 🎲 {roll}")
+
+        # Game rules
+        if roll == 6:
+            scores[player] += 10
+            if previous_rolls[player] == 6:
+                print(f"🔥 {player} rolled two 6s in a row! +5 bonus")
+                scores[player] += 5
+        elif roll == 1:
+            scores[player] -= 5
+        else:
+            scores[player] += roll
+
+        # Reset if score goes below 0
+        if scores[player] < 0:
+            print(f"⚠️ {player}'s score dropped below zero. Reset to 0.")
+            scores[player] = 0
+
+        # Update previous roll
+        previous_rolls[player] = roll
+
+    # Show scores after round
+    print(f"\n📊 Scores after Round {rounds}")
+    for p in players:
+        print(f"{p}: {scores[p]} points")
+
+    rounds += 1
+
+# Final results
+print("\n🏁 Tournament Over! Final Scores:\n")
+for player, score in scores.items():
+    print(f"{player}: {score} points")
+
+# Find the winner(s)
+max_score = max(scores.values())
+winners = [p for p in players if scores[p] == max_score]
+
+print("\n🥇 Winner(s):", ", ".join(winners), f"with {max_score} points! 🎉")
