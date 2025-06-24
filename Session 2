@@ -1,0 +1,98 @@
+# Project: Student Report Card Generator with Subject Insights
+# Author: Krishna Bhatia
+
+# Define global subject list
+subjects = ["Math", "Science", "English"]
+
+# Initialize student database
+students = {
+    "Biswa": {},
+    "Kuldeep": {},
+    "Nirmaan": {},
+    "Hiten": {},
+    "Krishna": {},
+    "Prateek": {}
+}
+
+# Function to input scores
+def input_scores():
+    for name in students:
+        print(f"\nEnter marks for {name}:")
+        for subject in subjects:
+            while True:
+                try:
+                    score = int(input(f"{subject} marks: "))
+                    if 0 <= score <= 100:
+                        students[name][subject] = score
+                        break
+                    else:
+                        print("Enter marks between 0 and 100.")
+                except ValueError:
+                    print("Please enter a valid number.")
+
+# Function to calculate average and grade
+def calculate_average_and_grade(marks):
+    avg = sum(marks.values()) / len(marks)
+    if avg >= 90:
+        grade = 'A'
+    elif avg >= 75:
+        grade = 'B'
+    elif avg >= 60:
+        grade = 'C'
+    elif avg >= 40:
+        grade = 'D'
+    else:
+        grade = 'F'
+    return avg, grade
+
+# Function to display report cards
+def generate_report_cards():
+    print("\n----- STUDENT REPORT CARDS -----")
+    for name, marks in students.items():
+        avg, grade = calculate_average_and_grade(marks)
+        print(f"\n{name}'s Report:")
+        for subject, score in marks.items():
+            print(f"  {subject}: {score}")
+        print(f"  Average: {avg:.2f}")
+        print(f"  Grade: {grade}")
+
+# Function to find subject-wise toppers
+def subject_wise_toppers():
+    print("\n----- SUBJECT-WISE TOPPERS -----")
+    toppers = {}
+    for subject in subjects:
+        max_score = max(students[name][subject] for name in students)
+        top_students = [name for name in students if students[name][subject] == max_score]
+        toppers[subject] = (max_score, top_students)
+        print(f"{subject} Topper(s) with {max_score} marks: {', '.join(top_students)}")
+    return toppers
+
+# Function to find interesting patterns
+def find_patterns(toppers):
+    print("\n----- INTERESTING PATTERNS -----")
+
+    # Subjects with same top scores
+    score_subject_pairs = [(subject, details[0]) for subject, details in toppers.items()]
+    score_to_subjects = {}
+    for subject, score in score_subject_pairs:
+        score_to_subjects.setdefault(score, []).append(subject)
+    
+    for score, subject_list in score_to_subjects.items():
+        if len(subject_list) > 1:
+            print(f"Subjects with same top score {score}: {subject_list}")
+
+    # Unique toppers across all subjects
+    unique_toppers = set()
+    for subject, (_, names) in toppers.items():
+        unique_toppers.update(names)
+    print(f"\nAll unique toppers across subjects: {unique_toppers}")
+
+# Main function to run the project
+def main():
+    input_scores()
+    generate_report_cards()
+    toppers = subject_wise_toppers()
+    find_patterns(toppers)
+
+# Run the project
+main()
